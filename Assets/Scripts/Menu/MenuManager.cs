@@ -8,12 +8,19 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] InputField playerNameInput;
+    public static MenuManager Instance { get; private set; }
 
-    static string playerName;
+    public string playerName;
     public int highScore;
     public void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
     public void LoadGameScene()
     {
