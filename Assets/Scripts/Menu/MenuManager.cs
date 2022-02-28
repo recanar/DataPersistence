@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,10 +9,13 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] InputField playerNameInput;
+    [SerializeField] TextMeshProUGUI bestPlayerText;
     public static MenuManager Instance { get; private set; }
 
     public string playerName;
     public int highScore;
+    public string bestPlayerName;
+    public int bestPlayerHighScore;
     public void Awake()
     {
         if (Instance != null)
@@ -22,6 +26,12 @@ public class MenuManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    void Start()
+    {
+        LoadData();
+        bestPlayerText.text = bestPlayerName + "   " + bestPlayerHighScore;
+    }
+
     public void LoadGameScene()
     {
         SceneManager.LoadScene("main");
@@ -30,14 +40,13 @@ public class MenuManager : MonoBehaviour
     {
         playerName = playerNameInput.text;
         PlayerData playerData = new PlayerData(playerName);
-        Debug.Log(playerData._playerName);
     }
 
     [System.Serializable]
     public class PlayerData
     {
-        public string _playerName { get; private set; }
-        public int _highScore { get; set; }
+        public string _playerName;
+        public int _highScore;
 
         public PlayerData(string playerName)
         {
@@ -52,20 +61,15 @@ public class MenuManager : MonoBehaviour
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
 
-    public PlayerData LoadData()
+    public void LoadData()
     {
         string path = Application.persistentDataPath + "/savefile.json";
         if (File.Exists(path))
         {
-            Debug.Log("Player Data Loaded");
             string json = File.ReadAllText(path);
             PlayerData playerData = JsonUtility.FromJson<PlayerData>(json);
-            highScore = playerData._highScore;
-            return playerData;
-        }
-        else
-        {
-            return null;
+            bestPlayerHighScore = playerData._highScore;
+            bestPlayerName = playerData._playerName;
         }
     }
 

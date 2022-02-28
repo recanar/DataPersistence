@@ -23,8 +23,6 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LoadHighScore();
-        BestScoreText.text = "BestScore:" + MenuManager.Instance.playerName + "  0";
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -43,7 +41,8 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
-        UpdateBestScore();
+
+        BestScoreText.text = "BestScore:" + MenuManager.Instance.bestPlayerName + "  "+MenuManager.Instance.bestPlayerHighScore;
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -71,20 +70,16 @@ public class MainManager : MonoBehaviour
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
     }
-    void UpdateBestScore()
-    {
-        BestScoreText.text = "BestScore:" + MenuManager.Instance.playerName+"  " + m_Points;
-    }
     public void SaveHighScore()
     {
-        MenuManager.PlayerData playerData = new MenuManager.PlayerData(MenuManager.Instance.playerName);
-
-        if (playerData._highScore < m_Points)
+        if (MenuManager.Instance.bestPlayerHighScore < m_Points)
         {
+            MenuManager.PlayerData playerData = new MenuManager.PlayerData(MenuManager.Instance.playerName);
             playerData._highScore = m_Points;
             MenuManager.Instance.SaveData(playerData);
+            MenuManager.Instance.LoadData();
+            Debug.Log("Player Data Saved:" + playerData._highScore);
         }
-        Debug.Log("Player Data Saved:"+playerData._highScore);
     }
     public void LoadHighScore()
     {
@@ -95,6 +90,7 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         SaveHighScore();
+        LoadHighScore();
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
