@@ -28,8 +28,11 @@ public class MenuManager : MonoBehaviour
     }
     void Start()
     {
+        //resets highscore if needed
+        //PlayerData playerData = new PlayerData("test"); playerData._highScore = 0;SaveData(playerData);
+
         LoadData();
-        bestPlayerText.text = bestPlayerName + "   " + bestPlayerHighScore;
+        bestPlayerText.text = "Best Score:"+bestPlayerName + "   " + bestPlayerHighScore;
     }
 
     public void LoadGameScene()
